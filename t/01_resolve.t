@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 2;
+use Test::More tests => 4;
 use HTML::ResolveLink;
 
 my $base = "http://www.example.com/base/";
@@ -21,6 +21,8 @@ is $html, <<'HTML';
 <!-- hello -->
 HTML
 
+is $resolver->resolved_count, 3;
+
 $html = $resolver->resolve(<<'HTML');
 <base href="http://www.google.com/">
 <a href="baz">foo</a>
@@ -35,3 +37,6 @@ is $html, <<'HTML', '<base>';
 <a href="http://www.example.com/baz">foo</a>
 HTML
     ;
+
+is $resolver->resolved_count, 2;
+

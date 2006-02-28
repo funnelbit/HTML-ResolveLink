@@ -1,7 +1,7 @@
 package HTML::ResolveLink;
 
 use strict;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 use base qw(HTML::Parser);
 
 use Carp;
@@ -47,6 +47,7 @@ sub _start_tag {
         unless (defined $uri->scheme) {
             $uri = $uri->abs($base);
             $attr->{$a} = $uri->as_string;
+            $self->{resolvelink_count}++;
         }
     }
 
@@ -81,11 +82,19 @@ sub _escape {
 sub resolve {
     my($self, $html) = @_;
 
-    $self->{resolvelink_html} = ''; # init
+    # init
+    $self->{resolvelink_html} = '';
+    $self->{resolvelink_count} = 0;
+
     $self->parse($html);
     $self->eof;
 
     $self->{resolvelink_html};
+}
+
+sub resolved_count {
+    my $self = shift;
+    $self->{resolvelink_count};
 }
 
 1;
@@ -103,6 +112,10 @@ HTML::ResolveLink - Resolve relative links in (X)HTML into absolute URI
       base => 'http://www.example.com/foo/bar.html',
   );
   $html = $resolver->resolve($html);
+
+  if ($resolver->resolved_count) {
+      ...
+  }
 
 =head1 DESCRIPTION
 
@@ -140,6 +153,14 @@ URI found in the document.
 
 Resolves relative URI found in C<$html> into absolute and returns a
 string containing rewritten one.
+
+=item resolved_count
+
+  $count = $resolver->resolved_count;
+
+Returns how many URIs are resolved during the previous I<resolve>
+method call. This should be called after the I<resolve>, otherwise
+returns undef.
 
 =head1 AUTHOR
 

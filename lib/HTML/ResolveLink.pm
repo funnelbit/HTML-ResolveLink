@@ -1,7 +1,7 @@
 package HTML::ResolveLink;
 
 use strict;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 use base qw(HTML::Parser);
 
 use Carp;
@@ -21,6 +21,7 @@ sub new {
 
     $p{base} = URI->new($p{base}) unless ref $p{base};
     $self->{resolvelink_base} = $p{base};
+    $self->{resolvelink_callback} = $p{callback} if $p{callback};
 
     $self;
 }
@@ -45,8 +46,12 @@ sub _start_tag {
 
         # relative link: 
         unless (defined $uri->scheme) {
+            my $old = $uri;
             $uri = $uri->abs($base);
             $attr->{$a} = $uri->as_string;
+            if ($self->{resolvelink_callback}) {
+                $self->{resolvelink_callback}->($uri, $old);
+            }
             $self->{resolvelink_count}++;
         }
     }
@@ -110,12 +115,12 @@ HTML::ResolveLink - Resolve relative links in (X)HTML into absolute URI
 
   my $resolver = HTML::ResolveLink->new(
       base => 'http://www.example.com/foo/bar.html',
+      callback => sub {
+         my($uri, $old) = @_;
+         # ...
+      },
   );
   $html = $resolver->resolve($html);
-
-  if ($resolver->resolved_count) {
-      ...
-  }
 
 =head1 DESCRIPTION
 
@@ -142,10 +147,33 @@ If the parser encounters C<< <base> >> tag in HTML, it'll honor that.
 
   my $resolver = HTML::ResolveLink->new(
       base => 'http://www.example.com/',
+      callback => \&callback,
   );
 
 C<base> is a required parameter, which is used to resolve the relative
 URI found in the document.
+
+C<callback> is an optional parameter, which is a callback subroutine
+reference which would take new resolved URI and the original path as
+arguments.
+
+Here's an example code to illustrate how to use callback function.
+
+  my $count;
+  my $resolver = HTML::ResolveLink->new(
+      base => $base,
+      callback => sub {
+          my($uri, $old) = @_;
+          warn "$old is resolved to $uri";
+          $count++;
+      },
+  );
+
+  $html = $resolver->resolve($html);
+
+  if ($count) {
+      warn "HTML::ResolveLink resolved $count links";
+  }
 
 =item resolve
 

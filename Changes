@@ -1,5 +1,9 @@
 Revision history for Perl extension HTML::ResolveLink
 
+0.04  Fri Nov  3 11:42:53 JST 2006
+        - Added URI.pm as a dependency
+          (Thanks to Andreas Koenig)
+
 0.03  Thu Sep 28 04:03:56 JST 2006
         - Added 'callback' parameter for new() which is called whenever URL is resolved.
           Added POD and test for it.

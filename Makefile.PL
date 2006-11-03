@@ -5,5 +5,6 @@ WriteMakefile(
     'PREREQ_PM' => {
 	Test::More => 0.32,
         HTML::Parser => 3.26,
+        URI => 0,
     },
 );

@@ -1,7 +1,7 @@
 package HTML::ResolveLink;
 
 use strict;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 use base qw(HTML::Parser);
 
 use Carp;
@@ -73,7 +73,7 @@ sub _default {
 my %escape = (
     '<' => '&lt;',
     '>' => '&gt;',
-    '"' => '&qout;',
+    '"' => '&quot;',
     '&' => '&amp;',
 );
 my $esc_re = join '|', keys %escape;

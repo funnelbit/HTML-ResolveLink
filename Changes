@@ -1,5 +1,9 @@
 Revision history for Perl extension HTML::ResolveLink
 
+0.05  Tue Nov 28 11:58:00 PST 2006
+        - Fixed typo in &quot;
+          (Thanks to SweetPotato)
+
 0.04  Fri Nov  3 11:42:53 JST 2006
         - Added URI.pm as a dependency
           (Thanks to Andreas Koenig)

@@ -29,7 +29,7 @@ sub new {
 sub _start_tag {
     my($self, $tagname, $attr, $attrseq, $text) = @_;
 
-    if ($tagname eq 'base' && defined $attr->{href}) {
+    if ($tagname eq 'base' && defined $attr->{href} && length $attr->{href}) {
         $self->{resolvelink_base} = $attr->{href};
     }
 
